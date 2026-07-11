@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NFC Local — Google Business Solutions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>@font-face{font-family:Inter;font-display:swap}</style>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --border: #e5e7eb;
+      --muted: #6b7280;
+      --foreground: #111827;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent: #059669;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--foreground);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* Header */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+      background: rgba(255,255,255,0.95);
+    }
+    header .container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    header img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    header .brand {
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+    header .brand span { color: var(--primary); }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 64px 0 48px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .hero p {
+      font-size: 1.125rem;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Products Grid */
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(360px,100%), 1fr));
+      gap: 24px;
+      padding-bottom: 80px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .card:hover {
+      box-shadow: 0 8px 30px rgba(0,0,0,.06);
+      transform: translateY(-2px);
+    }
+    .card .tag {
+      display: inline-block;
+      font-size: .75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      padding: 4px 10px;
+      border-radius: 100px;
+      margin-bottom: 12px;
+      width: fit-content;
+    }
+    .tag.one-time { background: #dbeafe; color: #1d4ed8; }
+
+    .card h3 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .card .desc {
+      color: var(--muted);
+      font-size: .95rem;
+      margin-bottom: 16px;
+      flex: 1;
+    }
+    .card .price {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .card .price small {
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .card ul {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 24px;
+    }
+    .card ul li {
+      font-size: .9rem;
+      padding: 4px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .card ul li::before {
+      content: "✓";
+      color: var(--accent);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .product-img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      object-fit: cover;
+    }
+
+    .paypal-wrapper {
+      margin-top: auto;
+      min-height: 45px;
+    }
+
+    /* Carousel */
+    .carousel {
+      position: relative;
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      background: #f3f4f6;
+    }
+    .carousel-track {
+      display: flex;
+      transition: transform .35s cubic-bezier(.25,.46,.45,.94);
+    }
+    .carousel-track img {
+      width: 100%;
+      flex-shrink: 0;
+      display: block;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+    }
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,.9);
+      color: #333;
+      font-size: 1.3rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,.15);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .carousel:hover .carousel-btn { opacity: 1; }
+    .carousel-btn.prev { left: 8px; }
+    .carousel-btn.next { right: 8px; }
+    .carousel-btn:hover { background: #fff; }
+    .carousel-dots {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      gap: 6px;
+    }
+    .carousel-dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.5);
+      cursor: pointer;
+      transition: background .2s, transform .2s;
+    }
+    .carousel-dots span.active {
+      background: #fff;
+      transform: scale(1.3);
+    }
+
+    /* Before / After Slider */
+    .ba-container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto 16px;
+      border-radius: 8px;
+      overflow: hidden;
+      user-select: none;
+      aspect-ratio: 1 / 1;
+    }
+    .ba-container img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .ba-after-img {
+      transform: scale(1.25);
+      transform-origin: center center;
+    }
+    .ba-before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 50%;
+      overflow: hidden;
+      z-index: 2;
+    }
+    .ba-before img { width: auto; height: 100%; max-width: none; }
+    .ba-handle {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 3px;
+      height: 100%;
+      background: #fff;
+      z-index: 3;
+      cursor: ew-resize;
+      transform: translateX(-1.5px);
+    }
+    .ba-handle::after {
+      content: "⟷";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #333;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    }
+    .ba-labels {
+      position: absolute;
+      bottom: 12px;
+      left: 0;
+      right: 0;
+      z-index: 4;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 12px;
+      pointer-events: none;
+    }
+    .ba-labels span {
+      font-size: .7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: #fff;
+      background: rgba(0,0,0,.5);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* Businesses */
+    .biz-section { padding: 0 0 48px; }
+    .biz-section h2 {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+    .biz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(280px,100%), 1fr));
+      gap: 16px;
+    }
+    .biz-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: box-shadow .2s;
+    }
+    .biz-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.06); }
+    .biz-card .icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+    }
+    .biz-card h4 { font-size: 1rem; font-weight: 600; margin-bottom: 2px; }
+    .biz-card .stars { font-size: .85rem; color: #f59e0b; letter-spacing: .02em; margin-bottom: 4px; }
+    .biz-card .stars span { color: var(--foreground); font-weight: 600; margin-left: 4px; }
+    .biz-card .addr { font-size: .85rem; color: var(--muted); }
+    .biz-card .reviews { font-size: .78rem; color: var(--muted); margin-bottom: 10px; }
+    .biz-card a {
+      font-size: .8rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .biz-card a:hover { text-decoration: underline; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    @media (max-width: 740px) {
+      .products { grid-template-columns: 1fr; gap: 16px; }
+      .card { padding: 20px; }
+      .hero { padding: 32px 0 24px; }
+      .hero h1 { font-size: 1.75rem; }
+      header .container { padding: 0 16px; }
+      .container { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <img src="https://scontent-yyz1-1.cdninstagram.com/v/t51.82787-19/719109073_18085143599291491_4327796595710894_n.jpg?stp=dst-jpg_s150x150_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLmRqYW5nby44ODUuYzIifQ&_nc_ht=scontent-yyz1-1.cdninstagram.com&_nc_cat=107&_nc_oc=Q6cZ2gHI_GQUq1rtpN7yUQZ0BPjNRX0rpDeX4c0zxdEeGCaV5zzoRHPIJGhsFUbSCUA70s8&_nc_ohc=nRrGzEMQANQQ7kNvwGRPthy&_nc_gid=y5BGaYFR6WMPnXzKTlonfA&edm=AP4sbd4BAAAA&ccb=7-5&oh=00_AQBgIBK6_IMm6VsoQsoIkGUd3zLoogDR8zq-ybGdAi-tvA&oe=6A512E62&_nc_sid=7a9f4b" alt="NFC Local" onerror="this.style.display='none'">
+      <div class="brand">NFC <span>Local</span></div>
+    </div>
+  </header>
+  <script async src="https://www.paypal.com/sdk/js?client-id=BAA1fcNOGgiNGNswxaD5JzV8lt2yr6E2z8XRIiHEZ8-bCPiaHgKHcILkcxqCXHxNDH-0P8SjuyvCE83csI&components=hosted-buttons&disable-funding=venmo&currency=CAD"></script>
+
+  <main class="container">
+
+    <section class="hero">
+      <h1>Google Business Solutions</h1>
+      <p>Everything you need to get your business found on Google — NFC smart plates, profile management, and content creation.</p>
+    </section>
+
+    <section class="products" id="products">
+
+      <!-- Google NFC Plate -->
+      <div class="card">
+        <span class="tag one-time">One-Time</span>
+        <img class="product-img" src="https://i.imgur.com/nJxAeCJ.png" alt="Google NFC Plate" onerror="this.alt='NFC Plate';this.style.background='linear-gradient(135deg,#e5e7eb,#d1d5db)'">
+        <h3>Google NFC Plate</h3>
+        <p class="desc">A sleek NFC-enabled plate that links customers directly to your Google Business Profile. Tap &amp; review — no app needed.</p>
+        <div class="price">$40 <small>CAD</small></div>
+        <ul>
+          <li>Custom printed NFC smart plate</li>
+          <li>Links to your Google review page</li>
+          <li>No batteries or setup required</li>
+          <li>Works with any smartphone</li>
+        </ul>
+        <div id="paypal-container-BG4WHNBXVPYAN" class="paypal-wrapper"></div>
+      </div>
+
+      <!-- Custom NFC Plate 2-Pack -->
+      <div class="card">
+        <span class="tag one-time">One-Time</span>
+        <div class="carousel">
+          <div class="carousel-track">
+            <img src="https://i.imgur.com/SuxRNcC.png" alt="Custom NFC Plate 2-Pack" onerror="this.alt='Plate';this.style.background='linear-gradient(135deg,#e5e7eb,#d1d5db)'">
+            <img src="https://i.imgur.com/BykYXKY.png" alt="Custom NFC Plate 2-Pack" onerror="this.alt='Card';this.style.background='linear-gradient(135deg,#e5e7eb,#d1d5db)'">
+          </div>
+          <button class="carousel-btn prev" aria-label="Previous">‹</button>
+          <button class="carousel-btn next" aria-label="Next">›</button>
+          <div class="carousel-dots"></div>
+        </div>
+        <h3>Custom NFC Plate 2-Pack</h3>
+        <p class="desc">Two custom-printed NFC plates with your business logo — one card and one plate. Links customers directly to your Google Business Profile. Tap &amp; review — no app needed.</p>
+        <div class="price">$165 <small>CAD</small></div>
+        <ul>
+          <li>1 custom card + 1 custom plate</li>
+          <li>Printed with your business logo</li>
+          <li>Links to your Google review page</li>
+          <li>No batteries or setup required</li>
+        </ul>
+        <div id="paypal-container-WYUJTCJE2BV6L" class="paypal-wrapper"></div>
+      </div>
+
+      <!-- UGC Product Virtual Photoshoot -->
+      <div class="card">
+        <span class="tag one-time">One-Time</span>
+        <div class="ba-container" id="ba-slider">
+          <img src="https://i.imgur.com/mgXBXN4.png" alt="After" id="ba-after" class="ba-after-img">
+          <div class="ba-before" id="ba-before-wrap">
+            <img src="https://i.imgur.com/e1ZOKWM.png" alt="Before">
+          </div>
+          <div class="ba-handle" id="ba-handle"></div>
+          <div class="ba-labels">
+            <span>Before</span>
+            <span>After</span>
+          </div>
+        </div>
+        <h3>UGC Product Virtual Photoshoot</h3>
+        <p class="desc">5 professional AI-generated product photos in real-world lifestyle settings. Drag the slider to see the transformation.</p>
+        <div class="price">$45 <small>CAD</small></div>
+        <ul>
+          <li>5 high-res lifestyle product photos</li>
+          <li>AI-generated real-world settings</li>
+          <li>Web-optimized &amp; print-ready</li>
+          <li>48-hour turnaround</li>
+        </ul>
+        <div id="paypal-container-DWGQT43QFYKJ2" class="paypal-wrapper"></div>
+      </div>
+
+    </section>
+
+    <section class="biz-section">
+      <h2>Businesses I've Helped</h2>
+      <div class="biz-grid">
+        <div class="biz-card">
+          <div class="icon" style="background:#dbeafe;color:#2563eb">🔧</div>
+          <h4>General Auto</h4>
+          <div class="stars">★★★★★ <span>4.4</span></div>
+          <p class="addr">9315 Boul. Saint-Laurent</p>
+          <p class="reviews">58 Google reviews</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=General+Auto+9315+Boulevard+Saint-Laurent+Montreal" target="_blank" rel="noopener">View on Google Maps →</a>
+        </div>
+        <div class="biz-card">
+          <div class="icon" style="background:#d1fae5;color:#059669">⚡</div>
+          <h4>Electro Legendre</h4>
+          <div class="stars">★★★★★ <span>5.0</span></div>
+          <p class="addr">15 Rue Legendre O</p>
+          <p class="reviews">31 Google reviews</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=Electro+Legendre+15+Rue+Legendre+Ouest+Montreal" target="_blank" rel="noopener">View on Google Maps →</a>
+        </div>
+        <div class="biz-card">
+          <div class="icon" style="background:#fef3c7;color:#d97706">🍗</div>
+          <h4>Rôtisserie Coq-O-Bec + Pizza</h4>
+          <div class="stars">★★★★★ <span>4.3</span></div>
+          <p class="addr">705 Bd Cure-Labelle</p>
+          <p class="reviews">375 Google reviews</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=Rotisserie+Coq-O-Bec+Pizza+705+Boulevard+Cure-Labelle+Laval" target="_blank" rel="noopener">View on Google Maps →</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="text-align:center;padding:32px 0 48px">
+      <p style="font-size:.95rem;color:var(--muted);margin-bottom:12px">Follow us for tips, updates &amp; behind-the-scenes</p>
+      <a href="https://instagram.com/eznfc" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af);color:#fff;text-decoration:none;padding:12px 28px;border-radius:100px;font-weight:600;font-size:1rem;transition:transform .2s,box-shadow .2s" onmouseover="this.style.transform='scale(1.05)';this.style.boxShadow='0 4px 20px rgba(0,0,0,.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        Follow @eznfc
+      </a>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      &copy; 2026 NFC Local. All prices in CAD. Payments processed securely by PayPal.
+    </div>
+  </footer>
+
+  <script>
+    window.addEventListener('pageshow', function(e) { if (e.persisted) location.reload() })
+
+    var paypalRendered = false
+
+    function initPayPal() {
+      if (paypalRendered) return
+      var ready = true
+
+      if (typeof paypal === 'undefined' || !paypal.HostedButtons) ready = false
+      if (!ready) return
+
+      paypalRendered = true
+
+      paypal.HostedButtons({ hostedButtonId: "BG4WHNBXVPYAN" }).render("#paypal-container-BG4WHNBXVPYAN")
+      paypal.HostedButtons({ hostedButtonId: "DWGQT43QFYKJ2" }).render("#paypal-container-DWGQT43QFYKJ2")
+      paypal.HostedButtons({ hostedButtonId: "WYUJTCJE2BV6L" }).render("#paypal-container-WYUJTCJE2BV6L")
+    }
+
+    initPayPal()
+    var pollTimer = setInterval(function() {
+      if (paypalRendered) { clearInterval(pollTimer); return }
+      initPayPal()
+    }, 1000)
+    setTimeout(function() { clearInterval(pollTimer) }, 15000)
+
+    // Carousel
+    ;(function() {
+      var c = document.querySelector('.carousel')
+      if (c) {
+        var track = c.querySelector('.carousel-track')
+        var imgs = track.querySelectorAll('img')
+        var dotsEl = c.querySelector('.carousel-dots')
+        var idx = 0, len = imgs.length, startX = 0, d = false
+        for (var i = 0; i < len; i++) {
+          var dot = document.createElement('span')
+          dot.dataset.i = i
+          dot.addEventListener('click', function() { go(+this.dataset.i) })
+          dotsEl.appendChild(dot)
+        }
+        function go(i) {
+          idx = i < 0 ? 0 : i >= len ? len - 1 : i
+          track.style.transform = 'translateX(-' + (idx * 100) + '%)'
+          dotsEl.querySelectorAll('span').forEach(function(s, j) { s.classList.toggle('active', j === idx) })
+        }
+        c.querySelector('.prev').addEventListener('click', function() { go(idx - 1) })
+        c.querySelector('.next').addEventListener('click', function() { go(idx + 1) })
+        go(0)
+        c.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; d = false })
+        c.addEventListener('touchmove', function(e) { if (Math.abs(e.touches[0].clientX - startX) > 30) d = true })
+        c.addEventListener('touchend', function(e) {
+          if (!d) return
+          var diff = e.changedTouches[0].clientX - startX
+          go(diff < -30 ? idx + 1 : diff > 30 ? idx - 1 : idx)
+        })
+      }
+    })()
+
+    // Before / After slider
+    ;(function() {
+      var container = document.getElementById('ba-slider')
+      if (!container) return
+      var beforeWrap = document.getElementById('ba-before-wrap')
+      var handle = document.getElementById('ba-handle')
+      var isDragging = false
+
+      function setPos(x) {
+        var rect = container.getBoundingClientRect()
+        var pct = Math.max(0, Math.min(1, (x - rect.left) / rect.width)) * 100
+        beforeWrap.style.width = pct + '%'
+        handle.style.left = pct + '%'
+      }
+
+      function onDown(e) { isDragging = true; setPos(e.clientX || e.touches[0].clientX) }
+      function onMove(e) { if (isDragging) { e.preventDefault(); setPos(e.clientX || e.touches[0].clientX) } }
+      function onUp() { isDragging = false }
+
+      function initSlider() {
+        var rect = container.getBoundingClientRect()
+        if (!rect.width) { requestAnimationFrame(initSlider); return }
+        setPos(rect.left + rect.width / 2)
+      }
+      initSlider()
+
+      handle.addEventListener('mousedown', onDown)
+      handle.addEventListener('touchstart', onDown, { passive: true })
+      document.addEventListener('mousemove', onMove)
+      document.addEventListener('mouseup', onUp)
+      document.addEventListener('touchmove', onMove, { passive: false })
+      document.addEventListener('touchend', onUp)
+    })()
+  </script>
+
+</body>
+</html>
